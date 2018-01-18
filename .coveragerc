@@ -3,5 +3,5 @@ omit=
 	setup.py
 	manage.py
 	*/test/*
-	webapp/settings/*
-	webapp/wsgi.py
+	lookupproxy/settings/*
+	lookupproxy/wsgi.py

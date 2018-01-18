@@ -15,6 +15,6 @@ VOLUME /usr/src/app
 # developer-specific settings.
 #
 # *DO NOT DEPLOY THIS TO PRODUCTION*
-ENV DJANGO_SETTINGS_MODULE webapp.settings_developer
+ENV DJANGO_SETTINGS_MODULE lookupproxy.settings_developer
 ENTRYPOINT ["./manage.py"]
 CMD ["runserver", "0.0.0.0:8080"]

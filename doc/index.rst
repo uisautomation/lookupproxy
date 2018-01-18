@@ -11,4 +11,4 @@ If you don't know where to start then :doc:`the getting started guide
     gettingstarted
     developer
     configuration
-    webapp
+    lookupproxy

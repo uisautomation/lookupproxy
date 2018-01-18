@@ -1,5 +1,5 @@
 """
-The default :py:mod:`webapp.settings` module contains settings which are
+The default :py:mod:`lookupproxy.settings` module contains settings which are
 common to most deployment environments.
 
 """

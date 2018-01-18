@@ -41,7 +41,7 @@ MIDDLEWARE = [
 ]
 
 #: Root URL patterns
-ROOT_URLCONF = 'webapp.urls'
+ROOT_URLCONF = 'lookupproxy.urls'
 
 #: Template loading
 TEMPLATES = [
@@ -61,7 +61,7 @@ TEMPLATES = [
 ]
 
 #: WSGI
-WSGI_APPLICATION = 'webapp.wsgi.application'
+WSGI_APPLICATION = 'lookupproxy.wsgi.application'
 
 
 #: Database configuration. The default settings allow configuration of the database from
