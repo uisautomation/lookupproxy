@@ -169,6 +169,6 @@ rst_prolog = """
 .. |project| replace:: {0}
 .. |author| replace:: {1}
 """.format(
-project,
-author
+    project,
+    author
 )
