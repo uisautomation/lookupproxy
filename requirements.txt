@@ -9,6 +9,12 @@ git+https://git.uis.cam.ac.uk/uis/automation/django-automationcommon.git@master#
 django-ucamwebauth>=1.4.5
 git+https://github.com/uisautomation/django-ucamlookup@master#egg=django-ucamlookup
 
+# Rest framework and its dependencies. See
+# http://www.django-rest-framework.org/#installation
+djangorestframework
+markdown
+django-filter
+
 # For an improved ./manage.py shell experience
 ipython
 
