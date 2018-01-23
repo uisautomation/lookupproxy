@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'corsheaders',
     'automationcommon',
     'ucamwebauth',
     'ucamlookup',
@@ -32,6 +33,7 @@ INSTALLED_APPS = [
 
 #: Installed middleware
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -135,6 +137,10 @@ AUTHENTICATION_BACKENDS = [
     'ucamwebauth.backends.RavenAuthBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+
+#: By default, whitelist all origins for CORS
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Raven login configuration

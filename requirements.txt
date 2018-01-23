@@ -15,6 +15,9 @@ djangorestframework
 markdown
 django-filter
 
+# So that we may add CORS headers to our responses
+django-cors-headers
+
 # For an improved ./manage.py shell experience
 ipython
 
