@@ -4,8 +4,11 @@ FROM python:3.6
 # application.
 WORKDIR /usr/src/app
 
+# Copy entrypoint script
+ADD ./compose/start-devserver.sh /tmp/
+
 # Install any explicit requirements
-ADD requirements*.txt ./
+ADD ./requirements*.txt ./
 RUN pip install -r ./requirements_developer.txt
 
 # The webapp source will be mounted here as a volume
@@ -16,5 +19,4 @@ VOLUME /usr/src/app
 #
 # *DO NOT DEPLOY THIS TO PRODUCTION*
 ENV DJANGO_SETTINGS_MODULE lookupproxy.settings_developer
-ENTRYPOINT ["./manage.py"]
-CMD ["runserver", "0.0.0.0:8080"]
+ENTRYPOINT ["/tmp/start-devserver.sh"]
