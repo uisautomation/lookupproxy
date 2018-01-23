@@ -18,6 +18,13 @@ django-filter
 # So that we may add CORS headers to our responses
 django-cors-headers
 
+# We do some pretty deep customisation of drf-yasg. Fix the precise version.
+drf-yasg[validation]==1.2.2
+
+# For maaging OAuth2 tokens
+oauthlib
+requests-oauthlib
+
 # For an improved ./manage.py shell experience
 ipython
 

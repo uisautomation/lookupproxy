@@ -2,7 +2,7 @@ import os
 
 #: Base directory containing the project. Build paths inside the project via
 #: ``os.path.join(BASE_DIR, ...)``.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 #: The Django secret key is by default set from the environment. If omitted, a system check will
@@ -25,10 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'corsheaders',
-    'automationcommon',
     'ucamwebauth',
-    'ucamlookup',
+    'automationcommon',
     'rest_framework',
+    'drf_yasg',
+
+    'lookupapi',
 ]
 
 #: Installed middleware
@@ -50,7 +52,7 @@ ROOT_URLCONF = 'lookupproxy.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,6 +134,10 @@ USE_TZ = True
 #: .. seealso:: https://docs.djangoproject.com/en/2.0/howto/static-files/
 STATIC_URL = '/static/'
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+
 #: Authentication backends
 AUTHENTICATION_BACKENDS = [
     'ucamwebauth.backends.RavenAuthBackend',
@@ -154,3 +160,21 @@ UCAMWEBAUTH_LOGOUT_REDIRECT = 'https://raven.cam.ac.uk/auth/logout.html'
 
 #: Allow members who are not current members to log in?
 UCAMWEBAUTH_NOT_CURRENT = False
+
+
+#: Swagger UI settings
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,
+    'DEFAULT_AUTO_SCHEMA_CLASS': 'lookupapi.inspectors.SwaggerAutoSchema',
+    'SECURITY_DEFINITIONS': {
+        'oauth2': {
+            'type': 'oauth2',
+            'description': 'OAuth2 Bearer Token',
+            'flow': 'implicit',
+            'authorizationUrl': 'http://oauth2.example.com/oauth2/auth',
+            'scopes': {
+                'lookup:anonymous': 'Anonymous Lookup Access',
+            },
+        },
+    },
+}

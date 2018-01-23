@@ -19,6 +19,10 @@ from django.urls import path, include
 
 import automationcommon.views
 
+# This is a bit ugly but it means that we can separate the Swagger UI customisations into the
+# project and leave the lookupapi application "pristine".
+from lookupapi.urls import schema_view
+
 # Django debug toolbar is only installed in developer builds
 try:
     import debug_toolbar.urls
@@ -30,6 +34,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('ucamwebauth.urls')),
     path('status', automationcommon.views.status, name='status'),
+
+    path('', include('lookupapi.urls')),
+    path('ui', schema_view.with_ui('swagger', cache_timeout=None), name='schema-swagger-ui'),
 ]
 
 # Selectively enable django debug toolbar URLs. Only if the toolbar is

@@ -94,7 +94,7 @@ application. The ``scrips/create-client.sh`` will create a suitable client with
 the id "testclient".
 
 After creating the "testclient" client, you can browse the API docs at
-http://localhost:8080/swagger. Click the "Authorize" button to obtain an access
+http://localhost:8080/ui. Click the "Authorize" button to obtain an access
 token as "testclient". Remember to check that the ``lookup:anonymous`` scope is
 selected.
 
