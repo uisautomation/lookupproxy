@@ -78,15 +78,25 @@ directory of the application and add contents similar to the following:
 .. literalinclude:: ../setupenv.example.sh
     :language: bash
 
-Perform initial migration
-`````````````````````````
+Start the development server
+````````````````````````````
 
-Before running for the first time, an initial database migration must be
-performed as usual:
+There is a `docker-compose <https://docs.docker.com/compose/>`_ file at the
+top-level of the webapp repository which contains configuration allowing the
+application container to be launched in a development mode.
 
 .. code-block:: bash
 
-    $ ./manage.py migrate
+    $ docker-compose up devserver
+
+Before you can authenticate against the API, you must create an OAuth2 client
+application. The ``scrips/create-client.sh`` will create a suitable client with
+the id "testclient".
+
+After creating the "testclient" client, you can browse the API docs at
+http://localhost:8080/ui. Click the "Authorize" button to obtain an access
+token as "testclient". Remember to check that the ``lookup:anonymous`` scope is
+selected.
 
 Next steps
 ``````````

@@ -1,9 +1,12 @@
-# Django Boilerplate Webapp
+# Lookup Proxy API
 
-This is a django startproject template for django projects in the University Information Services.
+[![Build
+Status](https://travis-ci.org/uisautomation/lookupproxy.svg?branch=master)](https://travis-ci.org/uisautomation/lookupproxy)
 
-To use it, simply execute the following command:
+This is a proxy API for the University of Cambridge Lookup service. It must be
+hosted within the CUDN but may be used to provide access to the Lookup service
+for clients outside of the CUDN.
 
-```
-> django-admin startproject --template https://github.com/uisautomation/django-boilerplate/archive/master.zip --extension=py,md,html,txt --name=doc/Makefile name-of-project name-of-directory
-```
+Clients are authorised by means of an OAuth2 token with appropriate scope. See
+[the documentation](https://uisautomation.github.io/lookupproxy) for further
+details.

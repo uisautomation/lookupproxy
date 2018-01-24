@@ -164,6 +164,10 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+# -- Options for autodoc --------------------------------------------------
+
+autodoc_member_order = 'bysource'
+
 
 rst_prolog = """
 .. |project| replace:: {0}

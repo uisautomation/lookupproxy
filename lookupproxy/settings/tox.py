@@ -28,3 +28,10 @@ for v in _db_copy.values():
         v['PASSWORD'] = '<redacted>'
 print('Databases:')
 print(json.dumps(_db_copy, indent=2))
+
+# Make these fake endpoints
+LOOKUP_API_OAUTH2_TOKEN_URL = 'http://oauth2.example.com/oauth2/token'
+LOOKUP_API_OAUTH2_INTROSPECT_URL = 'http://oauth2.example.com/oauth2/introspect'
+LOOKUP_API_OAUTH2_CLIENT_ID = 'api-client-id'
+LOOKUP_API_OAUTH2_CLIENT_SECRET = 'api-client-secret'
+LOOKUP_API_OAUTH2_INTROSPECT_SCOPES = ['introspect']

@@ -7,6 +7,23 @@ psycopg2
 # in the VCS URL.
 git+https://github.com/uisautomation/django-automationcommon@master#egg=django-automationcommon
 django-ucamwebauth>=1.4.5
+git+https://github.com/uisautomation/django-ucamlookup@master#egg=django-ucamlookup
+
+# Rest framework and its dependencies. See
+# http://www.django-rest-framework.org/#installation
+djangorestframework
+markdown
+django-filter
+
+# So that we may add CORS headers to our responses
+django-cors-headers
+
+# We do some pretty deep customisation of drf-yasg. Fix the precise version.
+drf-yasg[validation]==1.2.2
+
+# For maaging OAuth2 tokens
+oauthlib
+requests-oauthlib
 
 # For an improved ./manage.py shell experience
 ipython

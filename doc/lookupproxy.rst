@@ -4,6 +4,17 @@ The lookupproxy project
 The ``lookupproxy`` project contains top-level configuration and URL routes for
 the entire web application.
 
+Extensions to drf-yasg
+----------------------
+
+This project overrides the ``drf-yasg/swagger-ui.html`` template provided by
+`drf-yasg <https://drf-yasg.readthedocs.io/>`_. The default template does not
+provided the degree of customisation needed for this project. Most notably, the
+OAuth2 redirect URL could not be customised. We ship a lightly modified version
+of the template for our needs along with some custom initialisation JavaScript
+as a static file. We also include the ``oauth2-redirect.html`` file which ships
+with the Swagger UI so that the OAuth2 flow works.
+
 Settings
 --------
 
