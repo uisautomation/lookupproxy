@@ -21,6 +21,8 @@ class LookupAPIConfig(AppConfig):
         Perform application initialisation once the Django platform has been initialised.
 
         """
+        super().ready()
+
         # Import, and thereby register, our custom system checks
         from . import systemchecks  # noqa: F401
 
