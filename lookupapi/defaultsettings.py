@@ -30,8 +30,8 @@ the empty string.
 
 LOOKUP_API_ENDPOINT_VERIFY = True
 """
-Specify whether certificated presented by the proxied Lookup API should be checked. Unless you are
-extremely sure in what you are doing, set this to True.
+Specify whether the certificate presented by the proxied Lookup API should be checked. Unless you
+are extremely sure in what you are doing, set this to True.
 
 """
 
