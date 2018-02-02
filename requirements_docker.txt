@@ -1,0 +1,6 @@
+# include base requirements
+-r ./requirements.txt
+
+# additional requirements for Docker container
+gunicorn
+whitenoise
