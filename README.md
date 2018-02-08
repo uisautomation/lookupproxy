@@ -11,3 +11,12 @@ for clients outside of the CUDN.
 Clients are authorised by means of an OAuth2 token with appropriate scope. See
 [the documentation](https://uisautomation.github.io/lookupproxy) for further
 details.
+
+## Dockerfile
+
+This application ships with a basic packaging using Docker. It makes use of
+[gunicorn](http://gunicorn.org/) to serve the docker application and, via
+[whitenoise](http://whitenoise.evans.io/en/stable/), to serve static files. The
+container is configured to use lookupproxy.settings.docker by default as the
+Django settings. In use you probably want to override this with a settings
+module which includes at least the OAuth2 configuration and SECRET_KEY setting.
