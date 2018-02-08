@@ -88,8 +88,8 @@ class AuthenticatedViewTestCase(ViewTestCase):
 
 
 class PersonByCRSIDTest(AuthenticatedViewTestCase, TestCase):
-    view_name = 'crsid-person-detail'
-    view_kwargs = {'crsid': 'spqr2'}
+    view_name = 'person-detail'
+    view_kwargs = {'scheme': 'crsid', 'identifier': 'spqr2'}
 
     def test_not_found(self):
         self.get_person_methods.return_value.getPerson.return_value = None
@@ -110,8 +110,8 @@ class PersonByCRSIDTest(AuthenticatedViewTestCase, TestCase):
         return person
 
 
-class PersonSearchTest(AuthenticatedViewTestCase, TestCase):
-    view_name = 'person-search'
+class PersonListTest(AuthenticatedViewTestCase, TestCase):
+    view_name = 'person-list'
     default_query = {'query': 'xxx'}
 
     def setUp(self):

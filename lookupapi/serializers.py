@@ -92,18 +92,14 @@ class AttributeSchemeSerializer(serializers.Serializer):
 class PersonHyperlink(serializers.HyperlinkedIdentityField):
     """A field which can construct the appropriate link to a Person resource."""
     def get_url(self, obj, view_name, request, format):
-        # We can only link to people identified by CRSid.
-        if obj.identifier.scheme != 'crsid':
-            return None
-
-        url_kwargs = {'crsid': obj.identifier.value}
+        url_kwargs = {'identifier': obj.identifier.value, 'scheme': obj.identifier.scheme}
         return reverse(view_name, kwargs=url_kwargs, request=request, format=format)
 
 
 class PersonHyperlinkSerializer(serializers.Serializer):
     """Hyperlink-only serializer for IbisPerson objects."""
     url = PersonHyperlink(
-        view_name='crsid-person-detail', help_text='Link to full resource.')
+        view_name='person-detail', help_text='Link to full resource.')
 
 
 class GroupHyperlinkSerializer(serializers.Serializer):
@@ -328,8 +324,8 @@ class PersonSerializer(PersonSummarySerializer):
     surname = serializers.CharField(help_text='The person\'s surname (if visible).')
 
 
-class PersonSearchResultsSerializer(serializers.Serializer):
-    """Serializer for search results."""
+class PersonListResultsSerializer(serializers.Serializer):
+    """Serializer for person list results."""
     results = PersonSummarySerializer(many=True, help_text='Results of search')
     count = serializers.IntegerField(help_text='Total number of results available.')
     offset = serializers.IntegerField(help_text='0-based index of first result to return.')
@@ -339,6 +335,11 @@ class PersonSearchResultsSerializer(serializers.Serializer):
 class AttributeSchemeListSerializer(serializers.Serializer):
     """Serializer for attribute scheme lists."""
     results = AttributeSchemeSerializer(many=True, help_text="List of attribute schemes")
+
+
+class InstitutionListResultsSerializer(serializers.Serializer):
+    """Serializer for person list results."""
+    results = InstitutionSummarySerializer(many=True, help_text='Results of search')
 
 
 class HealthSerializer(serializers.Serializer):

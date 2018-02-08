@@ -6,6 +6,7 @@ from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import generics
 from rest_framework.response import Response
+from drf_yasg.openapi import Parameter
 from drf_yasg.utils import swagger_auto_schema
 
 from . import ibis
@@ -66,7 +67,7 @@ class InstitutionFetchAttributes(generics.RetrieveAPIView):
     query_serializer=serializers.SearchParametersSerializer(),
     operation_security=[{'oauth2': REQUIRED_SCOPES}],
 ))
-class PersonSearch(ViewPermissionsMixin, generics.RetrieveAPIView):
+class PersonList(ViewPermissionsMixin, generics.ListAPIView):
     """
     Search for people using a free text query string. This is the same search function that is used
     in the Lookup web application. By default, only a few basic details about each person are
@@ -74,7 +75,7 @@ class PersonSearch(ViewPermissionsMixin, generics.RetrieveAPIView):
     references.
 
     """
-    serializer_class = serializers.PersonSearchResultsSerializer
+    serializer_class = serializers.PersonListResultsSerializer
 
     count_query_keys = ['query', 'approxMatches', 'includeCancelled', 'misStatus', 'attributes']
     """Query keys which are used by both searchCount and search."""
@@ -82,24 +83,34 @@ class PersonSearch(ViewPermissionsMixin, generics.RetrieveAPIView):
     full_query_keys = ['offset', 'limit', 'fetch', 'orderBy']
     """Query keys which are used only by search."""
 
-    def get_object(self):
-        query = serializers.SearchParametersSerializer(self.request.query_params).data
+    def list(self, request):
+        query = serializers.SearchParametersSerializer(request.query_params).data
         kwargs = {key: query.get(key) for key in self.count_query_keys}
         count = ibis.get_person_methods().searchCount(**kwargs)
         kwargs.update({key: query.get(key) for key in self.full_query_keys})
         results = ibis.get_person_methods().search(**kwargs)
-        return {
+        return Response(self.serializer_class({
             'results': results, 'count': count, 'offset': query['offset'], 'limit': query['limit']
-        }
+        }, context={'request': request}).data)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
     query_serializer=serializers.FetchParametersSerializer(),
     operation_security=[{'oauth2': REQUIRED_SCOPES}],
+    manual_parameters=[
+        Parameter(
+            name='scheme', in_='path', required=True, type='string', description=(
+                'Identifier scheme used to identify the person. Typically this will be "crsid".')),
+        Parameter(
+            name='identifier', in_='path', required=True, type='string', description=(
+                'Identifier of the person in the given scheme. For example, in the "crsid" scheme '
+                'this will be the crsid of the person.')),
+    ],
 ))
-class PersonByCRSID(ViewPermissionsMixin, generics.RetrieveAPIView):
+class Person(ViewPermissionsMixin, generics.RetrieveAPIView):
     """
-    Retrieve information on a person by CRSid.
+    Retrieve information on a person by scheme and identifier within that scheme. The scheme is
+    usually "crsid" and the identifier is usually that person's crsid.
 
     """
     serializer_class = serializers.PersonSerializer
@@ -107,7 +118,7 @@ class PersonByCRSID(ViewPermissionsMixin, generics.RetrieveAPIView):
     def get_object(self):
         query = serializers.FetchParametersSerializer(self.request.query_params)
         return _get_or_404(ibis.get_person_methods().getPerson(
-            'crsid', self.kwargs['crsid'], query.data['fetch']))
+            self.kwargs['scheme'], self.kwargs['identifier'], query.data['fetch']))
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
@@ -136,23 +147,14 @@ class InstitutionList(ViewPermissionsMixin, generics.ListAPIView):
     Return a list of all institutions known to Lookup.
 
     """
-    serializer_class = serializers.InstitutionSerializer
+    serializer_class = serializers.InstitutionListResultsSerializer
 
-    def get_queryset(self):
+    def list(self, request):
         query = serializers.InstitutionListParametersSerializer(self.request.query_params).data
-        return ibis.get_institution_methods().allInsts(
+        results = ibis.get_institution_methods().allInsts(
             includeCancelled=query['includeCancelled'], fetch=query['fetch'])
-
-    def paginate_queryset(self, queryset):
-        """
-        Overridden since this has to return non-None for the get_paginated_response method to be
-        called.
-
-        """
-        return queryset
-
-    def get_paginated_response(self, data):
-        return Response({'results': data})
+        return Response(self.serializer_class(
+            {'results': results}, context={'request': request}).data)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
