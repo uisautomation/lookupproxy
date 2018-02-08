@@ -18,9 +18,10 @@ class Base64Field(serializers.Field):
 
 class FetchParametersSerializer(serializers.Serializer):
     """Serialise fetch parameters from a query string."""
-    fetch = serializers.CharField(default='', help_text=(
+    fetch = serializers.CharField(default=None, help_text=(
         'Comma-separated list of additional data to fetch for the resource. See '
-        'https://www.lookup.cam.ac.uk/doc/ws-pydocs3/ibisclient.methods.PersonMethods.html '
+        'https://www.lookup.cam.ac.uk/doc/ws-pydocs3/ibisclient.methods.PersonMethods.html and '
+        'https://www.lookup.cam.ac.uk/doc/ws-pydocs3/ibisclient.methods.InstitutionMethods.html '
         'for details on the values this parameter can take.'))
 
 
@@ -54,6 +55,12 @@ class SearchParametersSerializer(FetchParametersSerializer):
         default='surname',
         choices=[('identifier', 'Primary Identifier'), ('surname', 'Surname')],
         help_text='The order in which to list the results. The default is "surname".')
+
+
+class InstitutionListParametersSerializer(FetchParametersSerializer):
+    """Serialise parameters the for the institution list endpoing."""
+    includeCancelled = serializers.BooleanField(default=False, help_text=(
+        'Flag to allow cancelled institutions. By default, only live institutions are returned.'))
 
 
 class AttributeSchemeSerializer(serializers.Serializer):

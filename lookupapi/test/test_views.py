@@ -138,6 +138,65 @@ class PersonSearchTest(AuthenticatedViewTestCase, TestCase):
         return person
 
 
+class InstitutionListTest(AuthenticatedViewTestCase, TestCase):
+    view_name = 'institution-list'
+
+    def setUp(self):
+        super().setUp()
+
+        # By default, return no results
+        self.set_return_value([])
+
+    def test_empty_list(self):
+        response = self.get()
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data.get('results'), [])
+
+    def test_multiple_reponse(self):
+        """Multiple institutions should return correctly."""
+        inst_list = [
+            self.create_institution('TESTA'),
+            self.create_institution('TESTB'),
+        ]
+        self.set_return_value(inst_list)
+        response = self.get()
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(len(data['results']), len(inst_list))
+        for received, expected in zip(data['results'], inst_list):
+            self.assertEqual(received['name'], expected.name)
+            self.assertEqual(received['instid'], expected.instid)
+
+    def test_no_query_params(self):
+        """Passing no query passes correct default values to allInsts"""
+        self.get()
+        self.mocked_allInsts.assert_called_with(includeCancelled=False, fetch=None)
+
+    def test_include_cancelled_param(self):
+        """Passing includeCancelled as query is passed to allInsts"""
+        self.get({'includeCancelled': 'true'})
+        self.mocked_allInsts.assert_called_with(includeCancelled=True, fetch=None)
+
+    def test_fetch_param(self):
+        """Passing fetch as query is passed to allInsts"""
+        self.get({'fetch': 'foo,bar'})
+        self.mocked_allInsts.assert_called_with(includeCancelled=False, fetch='foo,bar')
+
+    def set_return_value(self, return_value):
+        self.mocked_allInsts.return_value = return_value
+
+    @property
+    def mocked_allInsts(self):
+        return self.get_institution_methods.return_value.allInsts
+
+    def create_institution(self, instid):
+        institution = ibisclient.IbisInstitution()
+        institution.instid = instid
+        institution.name = 'Institution ' + instid
+        return institution
+
+
 class GroupTest(AuthenticatedViewTestCase, TestCase):
     view_name = 'group-detail'
     view_kwargs = {'groupid': '102030'}
