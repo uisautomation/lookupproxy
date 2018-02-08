@@ -56,11 +56,12 @@ can use this in your URL config to render a Swagger UI for the API:
 
 urlpatterns = [
     path('attributes/people', views.PersonFetchAttributes.as_view(), name='person-attributes'),
-    path('search', views.PersonSearch.as_view(), name='person-search'),
+    path('people', views.PersonSearch.as_view(), name='person-search'),
     path('people/crsid/<crsid>', views.PersonByCRSID.as_view(), name='crsid-person-detail'),
 
     path('groups/<groupid>', views.Group.as_view(), name='group-detail'),
 
+    path('institutions', views.InstitutionList.as_view(), name='institution-list'),
     path('institutions/<instid>', views.Institution.as_view(), name='institution-detail'),
     path('attributes/institutions', views.InstitutionFetchAttributes.as_view(),
          name='institution-attributes'),

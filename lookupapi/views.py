@@ -5,6 +5,7 @@ Views for :py:mod:`lookupapi`.
 from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import generics
+from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 
 from . import ibis
@@ -124,6 +125,34 @@ class Group(ViewPermissionsMixin, generics.RetrieveAPIView):
         query = serializers.FetchParametersSerializer(self.request.query_params)
         return _get_or_404(ibis.get_group_methods().getGroup(
             self.kwargs['groupid'], query.data['fetch']))
+
+
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    query_serializer=serializers.InstitutionListParametersSerializer(),
+    operation_security=[{'oauth2': REQUIRED_SCOPES}],
+))
+class InstitutionList(ViewPermissionsMixin, generics.ListAPIView):
+    """
+    Return a list of all institutions known to Lookup.
+
+    """
+    serializer_class = serializers.InstitutionSerializer
+
+    def get_queryset(self):
+        query = serializers.InstitutionListParametersSerializer(self.request.query_params).data
+        return ibis.get_institution_methods().allInsts(
+            includeCancelled=query['includeCancelled'], fetch=query['fetch'])
+
+    def paginate_queryset(self, queryset):
+        """
+        Overridden since this has to return non-None for the get_paginated_response method to be
+        called.
+
+        """
+        return queryset
+
+    def get_paginated_response(self, data):
+        return Response({'results': data})
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
