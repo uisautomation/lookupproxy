@@ -147,23 +147,14 @@ class InstitutionList(ViewPermissionsMixin, generics.ListAPIView):
     Return a list of all institutions known to Lookup.
 
     """
-    serializer_class = serializers.InstitutionSerializer
+    serializer_class = serializers.InstitutionListResultsSerializer
 
-    def get_queryset(self):
+    def list(self, request):
         query = serializers.InstitutionListParametersSerializer(self.request.query_params).data
-        return ibis.get_institution_methods().allInsts(
+        results = ibis.get_institution_methods().allInsts(
             includeCancelled=query['includeCancelled'], fetch=query['fetch'])
-
-    def paginate_queryset(self, queryset):
-        """
-        Overridden since this has to return non-None for the get_paginated_response method to be
-        called.
-
-        """
-        return queryset
-
-    def get_paginated_response(self, data):
-        return Response({'results': data})
+        return Response(self.serializer_class(
+            {'results': results}, context={'request': request}).data)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

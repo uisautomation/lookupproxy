@@ -337,6 +337,11 @@ class AttributeSchemeListSerializer(serializers.Serializer):
     results = AttributeSchemeSerializer(many=True, help_text="List of attribute schemes")
 
 
+class InstitutionListResultsSerializer(serializers.Serializer):
+    """Serializer for person list results."""
+    results = InstitutionSummarySerializer(many=True, help_text='Results of search')
+
+
 class HealthSerializer(serializers.Serializer):
     """
     Health check response.
