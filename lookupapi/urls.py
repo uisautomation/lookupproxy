@@ -61,6 +61,7 @@ urlpatterns = [
 
     path('groups/<groupid>', views.Group.as_view(), name='group-detail'),
 
+    path('institutions', views.InstitutionList.as_view(), name='institution-list'),
     path('institutions/<instid>', views.Institution.as_view(), name='institution-detail'),
     path('attributes/institutions', views.InstitutionFetchAttributes.as_view(),
          name='institution-attributes'),
