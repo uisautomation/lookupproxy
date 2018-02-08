@@ -324,8 +324,8 @@ class PersonSerializer(PersonSummarySerializer):
     surname = serializers.CharField(help_text='The person\'s surname (if visible).')
 
 
-class PersonSearchResultsSerializer(serializers.Serializer):
-    """Serializer for search results."""
+class PersonListResultsSerializer(serializers.Serializer):
+    """Serializer for person list results."""
     results = PersonSummarySerializer(many=True, help_text='Results of search')
     count = serializers.IntegerField(help_text='Total number of results available.')
     offset = serializers.IntegerField(help_text='0-based index of first result to return.')

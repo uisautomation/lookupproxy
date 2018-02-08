@@ -67,7 +67,7 @@ class InstitutionFetchAttributes(generics.RetrieveAPIView):
     query_serializer=serializers.SearchParametersSerializer(),
     operation_security=[{'oauth2': REQUIRED_SCOPES}],
 ))
-class PersonSearch(ViewPermissionsMixin, generics.RetrieveAPIView):
+class PersonList(ViewPermissionsMixin, generics.ListAPIView):
     """
     Search for people using a free text query string. This is the same search function that is used
     in the Lookup web application. By default, only a few basic details about each person are
@@ -75,7 +75,7 @@ class PersonSearch(ViewPermissionsMixin, generics.RetrieveAPIView):
     references.
 
     """
-    serializer_class = serializers.PersonSearchResultsSerializer
+    serializer_class = serializers.PersonListResultsSerializer
 
     count_query_keys = ['query', 'approxMatches', 'includeCancelled', 'misStatus', 'attributes']
     """Query keys which are used by both searchCount and search."""
@@ -83,15 +83,15 @@ class PersonSearch(ViewPermissionsMixin, generics.RetrieveAPIView):
     full_query_keys = ['offset', 'limit', 'fetch', 'orderBy']
     """Query keys which are used only by search."""
 
-    def get_object(self):
-        query = serializers.SearchParametersSerializer(self.request.query_params).data
+    def list(self, request):
+        query = serializers.SearchParametersSerializer(request.query_params).data
         kwargs = {key: query.get(key) for key in self.count_query_keys}
         count = ibis.get_person_methods().searchCount(**kwargs)
         kwargs.update({key: query.get(key) for key in self.full_query_keys})
         results = ibis.get_person_methods().search(**kwargs)
-        return {
+        return Response(self.serializer_class({
             'results': results, 'count': count, 'offset': query['offset'], 'limit': query['limit']
-        }
+        }, context={'request': request}).data)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

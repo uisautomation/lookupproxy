@@ -110,8 +110,8 @@ class PersonByCRSIDTest(AuthenticatedViewTestCase, TestCase):
         return person
 
 
-class PersonSearchTest(AuthenticatedViewTestCase, TestCase):
-    view_name = 'person-search'
+class PersonListTest(AuthenticatedViewTestCase, TestCase):
+    view_name = 'person-list'
     default_query = {'query': 'xxx'}
 
     def setUp(self):
