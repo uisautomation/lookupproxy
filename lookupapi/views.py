@@ -6,6 +6,7 @@ from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import generics
 from rest_framework.response import Response
+from drf_yasg.openapi import Parameter
 from drf_yasg.utils import swagger_auto_schema
 
 from . import ibis
@@ -96,10 +97,20 @@ class PersonSearch(ViewPermissionsMixin, generics.RetrieveAPIView):
 @method_decorator(name='get', decorator=swagger_auto_schema(
     query_serializer=serializers.FetchParametersSerializer(),
     operation_security=[{'oauth2': REQUIRED_SCOPES}],
+    manual_parameters=[
+        Parameter(
+            name='scheme', in_='path', required=True, type='string', description=(
+                'Identifier scheme used to identify the person. Typically this will be "crsid".')),
+        Parameter(
+            name='identifier', in_='path', required=True, type='string', description=(
+                'Identifier of the person in the given scheme. For example, in the "crsid" scheme '
+                'this will be the crsid of the person.')),
+    ],
 ))
-class PersonByCRSID(ViewPermissionsMixin, generics.RetrieveAPIView):
+class Person(ViewPermissionsMixin, generics.RetrieveAPIView):
     """
-    Retrieve information on a person by CRSid.
+    Retrieve information on a person by scheme and identifier within that scheme. The scheme is
+    usually "crsid" and the identifier is usually that person's crsid.
 
     """
     serializer_class = serializers.PersonSerializer
@@ -107,7 +118,7 @@ class PersonByCRSID(ViewPermissionsMixin, generics.RetrieveAPIView):
     def get_object(self):
         query = serializers.FetchParametersSerializer(self.request.query_params)
         return _get_or_404(ibis.get_person_methods().getPerson(
-            'crsid', self.kwargs['crsid'], query.data['fetch']))
+            self.kwargs['scheme'], self.kwargs['identifier'], query.data['fetch']))
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

@@ -92,18 +92,14 @@ class AttributeSchemeSerializer(serializers.Serializer):
 class PersonHyperlink(serializers.HyperlinkedIdentityField):
     """A field which can construct the appropriate link to a Person resource."""
     def get_url(self, obj, view_name, request, format):
-        # We can only link to people identified by CRSid.
-        if obj.identifier.scheme != 'crsid':
-            return None
-
-        url_kwargs = {'crsid': obj.identifier.value}
+        url_kwargs = {'identifier': obj.identifier.value, 'scheme': obj.identifier.scheme}
         return reverse(view_name, kwargs=url_kwargs, request=request, format=format)
 
 
 class PersonHyperlinkSerializer(serializers.Serializer):
     """Hyperlink-only serializer for IbisPerson objects."""
     url = PersonHyperlink(
-        view_name='crsid-person-detail', help_text='Link to full resource.')
+        view_name='person-detail', help_text='Link to full resource.')
 
 
 class GroupHyperlinkSerializer(serializers.Serializer):
