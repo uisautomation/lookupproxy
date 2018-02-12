@@ -57,6 +57,7 @@ can use this in your URL config to render a Swagger UI for the API:
 urlpatterns = [
     path('attributes/people', views.PersonFetchAttributes.as_view(), name='person-attributes'),
     path('people', views.PersonList.as_view(), name='person-list'),
+    path('people/self', views.PersonSelf.as_view(), name='person-self'),
     path('people/<scheme>/<identifier>', views.Person.as_view(), name='person-detail'),
 
     path('groups/<groupid>', views.Group.as_view(), name='group-detail'),

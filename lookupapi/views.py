@@ -8,7 +8,6 @@ from rest_framework import generics
 from rest_framework.response import Response
 from drf_yasg.openapi import Parameter
 from drf_yasg.utils import swagger_auto_schema
-
 from . import ibis
 from . import serializers
 from .authentication import OAuth2TokenAuthentication
@@ -94,6 +93,21 @@ class PersonList(ViewPermissionsMixin, generics.ListAPIView):
         }, context={'request': request}).data)
 
 
+def getPerson_or_404(scheme, identifier, fetch):
+    """
+    Gets a lookup entry for a Person with the given schema and identifier. If the person
+    scheme is "mock" then test user mug99 is returned
+    :param scheme: usually "crsid" but also "mock"
+    :param identifier: the id of the person for the given scheme
+    :param fetch: any extra fetch parameters to pass to ibis
+    :return:
+    """
+    if scheme == "mock":
+        # Returns a mocked lookup entry for a Person (test user mug99)
+        return ibis.get_person_methods().getPerson("crsid", "mug99", fetch)
+    return _get_or_404(ibis.get_person_methods().getPerson(scheme, identifier, fetch))
+
+
 @method_decorator(name='get', decorator=swagger_auto_schema(
     query_serializer=serializers.FetchParametersSerializer(),
     operation_security=[{'oauth2': REQUIRED_SCOPES}],
@@ -117,8 +131,28 @@ class Person(ViewPermissionsMixin, generics.RetrieveAPIView):
 
     def get_object(self):
         query = serializers.FetchParametersSerializer(self.request.query_params)
-        return _get_or_404(ibis.get_person_methods().getPerson(
-            self.kwargs['scheme'], self.kwargs['identifier'], query.data['fetch']))
+        return getPerson_or_404(self.kwargs['scheme'], self.kwargs['identifier'],
+                                query.data['fetch'])
+
+
+@method_decorator(name='get', decorator=swagger_auto_schema(
+    query_serializer=serializers.FetchParametersSerializer(),
+    operation_security=[{'oauth2': REQUIRED_SCOPES}],
+))
+class PersonSelf(ViewPermissionsMixin, generics.RetrieveAPIView):
+    """
+    Retrieve information about the person logged in.
+
+    """
+    serializer_class = serializers.PersonSerializer
+
+    def get_object(self):
+        query = serializers.FetchParametersSerializer(self.request.query_params)
+        if self.request.user.is_authenticated:
+            scheme, identifier = self.request.user.username.split(":")
+            return getPerson_or_404(scheme, identifier, query.data['fetch'])
+        else:
+            raise Http404()
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
