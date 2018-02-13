@@ -149,7 +149,8 @@ class PersonMockedTest(AuthenticatedViewTestCase, TestCase):
 
 
 class PersonSelfTest(AuthenticatedViewTestCase, TestCase):
-    view_name = 'person-token-self'
+    view_name = 'person-detail'
+    view_kwargs = {'scheme': 'token', 'identifier': 'self'}
 
     def test_found(self):
         person = self.create_person()

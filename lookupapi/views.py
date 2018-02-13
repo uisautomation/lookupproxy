@@ -2,7 +2,7 @@
 Views for :py:mod:`lookupapi`.
 
 """
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.utils.decorators import method_decorator
 from rest_framework import generics
 from rest_framework.response import Response
@@ -96,34 +96,6 @@ class PersonList(ViewPermissionsMixin, generics.ListAPIView):
         }, context={'request': request}).data)
 
 
-def getPerson_or_404(scheme, identifier, fetch):
-    """
-    Gets a lookup entry for a Person with the given schema and identifier. If the person
-    scheme is "mock" then test user mug99 is returned
-    :param scheme: usually "crsid" but also "mock"
-    :param identifier: the id of the person for the given scheme
-    :param fetch: any extra fetch parameters to pass to ibis
-    :return:
-    """
-    if scheme == "mock" and re.match('test0([0-4]\d\d|500)', identifier):
-        # Returns a mocked lookup entry for a Person (test user mug99)
-        person = ibis.get_person_methods().getPerson("crsid", "mug99", fetch)
-        person.identifier = ibisclient.IbisIdentifier({'scheme': scheme, 'value': identifier})
-        person.identifier.value = identifier
-        if hasattr(person, "identifiers"):
-            person.identifiers = \
-                [ibisclient.IbisIdentifier({'scheme': scheme, 'value': identifier})]
-            person.identifiers[0].value = identifier
-        # Following raven recommendations: "User-ids test0001 to test0400 are marked as belonging
-        # to 'current staff and students', leaving user-ids test0401 to test0500 not so marked"
-        if re.match('test0(40[1-9]|4[1-9]\d|500)', identifier):
-            # This is the only way to have isStaff returning False, misAffiliation returns
-            # isStaff=True as some members of staff have this
-            person.misAffiliation = "student"
-        return person
-    return _get_or_404(ibis.get_person_methods().getPerson(scheme, identifier, fetch))
-
-
 @method_decorator(name='get', decorator=swagger_auto_schema(
     query_serializer=serializers.FetchParametersSerializer(),
     operation_security=[{'oauth2': REQUIRED_SCOPES}],
@@ -142,33 +114,46 @@ class Person(ViewPermissionsMixin, generics.RetrieveAPIView):
     Retrieve information on a person by scheme and identifier within that scheme. The scheme is
     usually "crsid" and the identifier is usually that person's crsid.
 
-    """
-    serializer_class = serializers.PersonSerializer
+    If the scheme is "mock" then data from the test user mug99 is returned with the
+    corresponding identifier from the API call.
 
-    def get_object(self):
-        query = serializers.FetchParametersSerializer(self.request.query_params)
-        return getPerson_or_404(self.kwargs['scheme'], self.kwargs['identifier'],
-                                query.data['fetch'])
-
-
-@method_decorator(name='get', decorator=swagger_auto_schema(
-    query_serializer=serializers.FetchParametersSerializer(),
-    operation_security=[{'oauth2': REQUIRED_SCOPES}],
-))
-class PersonSelf(ViewPermissionsMixin, generics.RetrieveAPIView):
-    """
-    Retrieve information about the person logged in.
+    If the scheme "token" and identifier "self" is used then if the user has been authenticated
+    it will return the lookup data of the authenticated user.
 
     """
     serializer_class = serializers.PersonSerializer
 
     def get_object(self):
         query = serializers.FetchParametersSerializer(self.request.query_params)
-        if self.request.user.is_authenticated:
-            scheme, identifier = self.request.user.username.split(":")
-            return getPerson_or_404(scheme, identifier, query.data['fetch'])
-        else:
-            raise Http404()
+        scheme = self.kwargs['scheme']
+        identifier = self.kwargs['identifier']
+        fetch = query.data['fetch']
+
+        if scheme == "token" and identifier == "self":
+            if self.request.user.is_authenticated:
+                scheme, identifier = self.request.user.username.split(":")
+                return _get_or_404(ibis.get_person_methods().getPerson(scheme, identifier, fetch))
+            else:
+                raise Http404("You are not authenticated")
+
+        if scheme == "mock" and re.match('test0([0-4]\d\d|500)', identifier):
+            # Returns a mocked lookup entry for a Person (test user mug99)
+            person = ibis.get_person_methods().getPerson("crsid", "mug99", fetch)
+            person.identifier = ibisclient.IbisIdentifier({'scheme': scheme, 'value': identifier})
+            person.identifier.value = identifier
+            if hasattr(person, "identifiers"):
+                person.identifiers = \
+                    [ibisclient.IbisIdentifier({'scheme': scheme, 'value': identifier})]
+                person.identifiers[0].value = identifier
+            # Following raven recommendations: "User-ids test0001 to test0400 are marked as belonging
+            # to 'current staff and students', leaving user-ids test0401 to test0500 not so marked"
+            if re.match('test0(40[1-9]|4[1-9]\d|500)', identifier):
+                # This is the only way to have isStaff returning False, misAffiliation returns
+                # isStaff=True as some members of staff have this
+                person.misAffiliation = "student"
+            return person
+
+        return _get_or_404(ibis.get_person_methods().getPerson(scheme, identifier, fetch))
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(
