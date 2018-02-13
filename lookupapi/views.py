@@ -2,7 +2,7 @@
 Views for :py:mod:`lookupapi`.
 
 """
-from django.http import Http404, HttpResponse
+from django.http import Http404
 from django.utils.decorators import method_decorator
 from rest_framework import generics
 from rest_framework.response import Response
@@ -144,8 +144,9 @@ class Person(ViewPermissionsMixin, generics.RetrieveAPIView):
                 person.identifiers = \
                     [ibisclient.IbisIdentifier({'scheme': scheme, 'value': identifier})]
                 person.identifiers[0].value = identifier
-            # Following raven recommendations: "User-ids test0001 to test0400 are marked as belonging
-            # to 'current staff and students', leaving user-ids test0401 to test0500 not so marked"
+            # Following raven recommendations: "User-ids test0001 to test0400 are marked as
+            # belonging to 'current staff and students', leaving user-ids test0401 to test0500 not
+            # so marked"
             if re.match('test0(40[1-9]|4[1-9]\d|500)', identifier):
                 # This is the only way to have isStaff returning False, misAffiliation returns
                 # isStaff=True as some members of staff have this

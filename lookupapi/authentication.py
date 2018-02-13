@@ -88,8 +88,6 @@ class OAuth2TokenAuthentication(BaseAuthentication):
 
         return (user, token)
 
-
-
     def validate_token(self, token):
         """
         Helper method which validates a Bearer token and returns the parsed response from the
