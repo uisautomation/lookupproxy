@@ -2,7 +2,6 @@
 Test that the registered system checks work as expected.
 
 """
-from django.conf import settings
 from django.core.management import call_command
 # Q: is this a documented import location for SystemCheckError?
 from django.core.management.base import SystemCheckError
