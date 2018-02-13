@@ -6,7 +6,6 @@ import functools
 import inspect
 from django.conf import settings
 from rest_framework.exceptions import APIException
-
 from ucamlookup import ibisclient
 
 

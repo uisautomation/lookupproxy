@@ -18,5 +18,4 @@ coverage.xml
 *.log
 .git
 build
-compose
 docker-compose.yml
