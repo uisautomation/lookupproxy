@@ -36,7 +36,7 @@ urlpatterns = [
     path('status', automationcommon.views.status, name='status'),
 
     path('', include('lookupapi.urls')),
-    path('ui', schema_view.with_ui('swagger', cache_timeout=None), name='schema-swagger-ui'),
+    path('ui/', schema_view.with_ui('swagger', cache_timeout=None), name='schema-swagger-ui'),
 ]
 
 # Selectively enable django debug toolbar URLs. Only if the toolbar is
