@@ -4,8 +4,9 @@ OAuth2 authentication for Django REST Framework views.
 """
 import datetime
 import logging
-
 from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authentication import BaseAuthentication
 from requests_oauthlib import OAuth2Session
 from oauthlib.oauth2 import BackendApplicationClient, TokenExpiredError
@@ -71,7 +72,23 @@ class OAuth2TokenAuthentication(BaseAuthentication):
         if token is None:
             return None
 
-        return (None, token)
+        # get or create a matching Django user if the token has a subject field, otherwise return
+        # no user.
+        subject = token.get('sub', '')
+        if subject != '':
+            # This is not quite the same as the default get_or_create() behaviour because we make
+            # use of the create_user() helper here. This ensures the user is created and that
+            # set_unusable_password() is also called on it.
+            try:
+                user = get_user_model().objects.get(username=subject)
+            except ObjectDoesNotExist:
+                user = get_user_model().objects.create_user(username=subject)
+        else:
+            user = None
+
+        return (user, token)
+
+
 
     def validate_token(self, token):
         """
