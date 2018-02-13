@@ -112,8 +112,44 @@ class PersonByCRSIDTest(AuthenticatedViewTestCase, TestCase):
         return person
 
 
+class PersonMockedTest(AuthenticatedViewTestCase, TestCase):
+    view_name = 'person-detail'
+    view_kwargs = {'scheme': 'mock', 'identifier': 'test0005'}
+
+    def test_found_staff(self):
+        self.view_kwargs['identifier'] = "test0005"
+        person = self.create_person()
+        self.get_person_methods.return_value.getPerson.return_value = person
+        response = self.get()
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        import sys
+        sys.stdout.write(str(data))
+        self.assertEqual(data['identifier']['value'], "test0005")
+        self.assertEqual(data['identifier']['scheme'], "mock")
+        self.assertTrue(data['isStaff'])
+
+    def test_found_no_staff(self):
+        self.view_kwargs['identifier'] = "test0405"
+        person = self.create_person()
+        self.get_person_methods.return_value.getPerson.return_value = person
+        response = self.get()
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data['identifier']['value'], "test0405")
+        self.assertEqual(data['identifier']['scheme'], "mock")
+        self.assertFalse(data['isStaff'])
+
+    def create_person(self):
+        person = ibisclient.IbisPerson()
+        person.displayName = 'Testing1'
+        person.identifier = ibisclient.IbisIdentifier({'scheme': 'crsid', 'value': 'mug99'})
+        person.identifier.value = 'mug99'
+        return person
+
+
 class PersonSelfTest(AuthenticatedViewTestCase, TestCase):
-    view_name = 'person-self'
+    view_name = 'person-token-self'
 
     def test_found(self):
         person = self.create_person()

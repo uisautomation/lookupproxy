@@ -8,13 +8,16 @@ from rest_framework import generics
 from rest_framework.response import Response
 from drf_yasg.openapi import Parameter
 from drf_yasg.utils import swagger_auto_schema
+from ucamlookup import ibisclient, re
 from . import ibis
 from . import serializers
 from .authentication import OAuth2TokenAuthentication
 from .permissions import HasScopesPermission
 
+
 # TODO: once the API has settled a little, these resource views can be re-factored into a generic
 # view and sub-classes.
+
 
 REQUIRED_SCOPES = ['lookup:anonymous']
 """
@@ -102,9 +105,22 @@ def getPerson_or_404(scheme, identifier, fetch):
     :param fetch: any extra fetch parameters to pass to ibis
     :return:
     """
-    if scheme == "mock":
+    if scheme == "mock" and re.match('test0([0-4]\d\d|500)', identifier):
         # Returns a mocked lookup entry for a Person (test user mug99)
-        return ibis.get_person_methods().getPerson("crsid", "mug99", fetch)
+        person = ibis.get_person_methods().getPerson("crsid", "mug99", fetch)
+        person.identifier = ibisclient.IbisIdentifier({'scheme': scheme, 'value': identifier})
+        person.identifier.value = identifier
+        if hasattr(person, "identifiers"):
+            person.identifiers = \
+                [ibisclient.IbisIdentifier({'scheme': scheme, 'value': identifier})]
+            person.identifiers[0].value = identifier
+        # Following raven recommendations: "User-ids test0001 to test0400 are marked as belonging
+        # to 'current staff and students', leaving user-ids test0401 to test0500 not so marked"
+        if re.match('test0(40[1-9]|4[1-9]\d|500)', identifier):
+            # This is the only way to have isStaff returning False, misAffiliation returns
+            # isStaff=True as some members of staff have this
+            person.misAffiliation = "student"
+        return person
     return _get_or_404(ibis.get_person_methods().getPerson(scheme, identifier, fetch))
 
 
