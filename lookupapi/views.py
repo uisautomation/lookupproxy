@@ -132,7 +132,6 @@ class Person(ViewPermissionsMixin, generics.RetrieveAPIView):
         if scheme == "token" and identifier == "self":
             if self.request.user.is_authenticated:
                 scheme, identifier = self.request.user.username.split(":")
-                return _get_or_404(ibis.get_person_methods().getPerson(scheme, identifier, fetch))
             else:
                 raise Http404("You are not authenticated")
 
