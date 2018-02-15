@@ -1,6 +1,8 @@
 # Import settings from the base settings file
 from .base import *  # noqa: F401, F403
 
+ALLOWED_HOSTS = ['*']
+
 # Use Demo Raven server
 UCAMWEBAUTH_LOGIN_URL = 'https://demo.raven.cam.ac.uk/auth/authenticate.html'
 UCAMWEBAUTH_LOGOUT_URL = 'https://demo.raven.cam.ac.uk/auth/logout.html'
