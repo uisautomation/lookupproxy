@@ -11,4 +11,5 @@ exec gunicorn lookupproxy.wsgi:application \
     --log-level=info \
     --log-file=- \
     --access-logfile=- \
+    --capture-output \
     "$@"
