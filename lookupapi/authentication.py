@@ -8,6 +8,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authentication import BaseAuthentication
+from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
 from oauthlib.oauth2 import BackendApplicationClient, TokenExpiredError
 
@@ -23,6 +24,9 @@ def _get_session():
     """
     client = BackendApplicationClient(client_id=settings.LOOKUP_API_OAUTH2_CLIENT_ID)
     session = OAuth2Session(client=client)
+    adapter = HTTPAdapter(max_retries=settings.LOOKUP_API_OAUTH2_MAX_RETRIES)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
     session.fetch_token(
         timeout=2, token_url=settings.LOOKUP_API_OAUTH2_TOKEN_URL,
         client_id=settings.LOOKUP_API_OAUTH2_CLIENT_ID,

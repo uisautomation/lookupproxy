@@ -69,3 +69,11 @@ List of OAuth2 scopes the API server will request for the token it will use with
 introspection endpoint.
 
 """
+
+LOOKUP_API_OAUTH2_MAX_RETRIES = 5
+"""
+Maximum number of retries when fetching URLs from the OAuth2 endpoint or OAuth2 authenticated URLs.
+This applies only to failed DNS lookups, socket connections and connection timeouts, never to
+requests where data has made it to the server.
+
+"""
