@@ -69,7 +69,9 @@ class AuthenticatedViewTestCase(ViewTestCase):
     def test_no_auth_fails(self):
         """Passing no authorisation fails."""
         self.mock_authenticate.return_value = None
-        self.assertEqual(self.get().status_code, 403)
+        response = self.get()
+        self.assertEqual(response.status_code, 401)
+        self.assertTrue(response.has_header('www-authenticate'))
 
     def test_no_scope_fails(self):
         """Passing authorisation with incorrect scopes fail."""
@@ -86,7 +88,7 @@ class AuthenticatedViewTestCase(ViewTestCase):
         mock_authenticate.return_value = return_value
 
         return mock.patch(
-            'lookupapi.authentication.OAuth2TokenAuthentication.authenticate', mock_authenticate)
+            'oauthcommon.authentication.OAuth2TokenAuthentication.authenticate', mock_authenticate)
 
 
 class PersonByCRSIDTest(AuthenticatedViewTestCase, TestCase):

@@ -11,7 +11,7 @@ from drf_yasg.utils import swagger_auto_schema
 from ucamlookup import ibisclient, re
 from . import ibis
 from . import serializers
-from .authentication import OAuth2TokenAuthentication
+from oauthcommon.authentication import OAuth2TokenAuthentication
 from .permissions import HasScopesPermission
 
 

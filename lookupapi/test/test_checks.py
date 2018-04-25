@@ -14,11 +14,11 @@ class RequiredSettings(TestCase):
 
     """
     required_settings = [
-        'LOOKUP_API_OAUTH2_TOKEN_URL',
-        'LOOKUP_API_OAUTH2_INTROSPECT_URL',
-        'LOOKUP_API_OAUTH2_CLIENT_ID',
-        'LOOKUP_API_OAUTH2_CLIENT_SECRET',
-        'LOOKUP_API_OAUTH2_INTROSPECT_SCOPES',
+        'OAUTH2_TOKEN_URL',
+        'OAUTH2_INTROSPECT_URL',
+        'OAUTH2_CLIENT_ID',
+        'OAUTH2_CLIENT_SECRET',
+        'OAUTH2_INTROSPECT_SCOPES',
     ]
 
     def test_checks_pass(self):

@@ -8,6 +8,7 @@ psycopg2
 git+https://github.com/uisautomation/django-automationcommon@master#egg=django-automationcommon
 django-ucamwebauth>=1.4.5
 git+https://github.com/uisautomation/django-ucamlookup@master#egg=django-ucamlookup
+git+https://github.com/uisautomation/django-oauthcommon@master#egg=django-oauthcommon
 
 # Rest framework and its dependencies. See
 # http://www.django-rest-framework.org/#installation

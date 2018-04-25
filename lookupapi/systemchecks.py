@@ -25,11 +25,11 @@ def api_credentials_check(app_configs, **kwargs):
 
     # Check that all required settings are specified and non-None
     required_settings = [
-        'LOOKUP_API_OAUTH2_TOKEN_URL',
-        'LOOKUP_API_OAUTH2_INTROSPECT_URL',
-        'LOOKUP_API_OAUTH2_CLIENT_ID',
-        'LOOKUP_API_OAUTH2_CLIENT_SECRET',
-        'LOOKUP_API_OAUTH2_INTROSPECT_SCOPES',
+        'OAUTH2_TOKEN_URL',
+        'OAUTH2_INTROSPECT_URL',
+        'OAUTH2_CLIENT_ID',
+        'OAUTH2_CLIENT_SECRET',
+        'OAUTH2_INTROSPECT_SCOPES',
     ]
     for idx, name in enumerate(required_settings):
         value = getattr(settings, name, None)
