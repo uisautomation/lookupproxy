@@ -4,9 +4,9 @@ OAuth2 authentication for Django REST Framework views.
 """
 import datetime
 import logging
+import django.db
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.authentication import BaseAuthentication
 from requests.adapters import HTTPAdapter
 from requests_oauthlib import OAuth2Session
@@ -83,10 +83,12 @@ class OAuth2TokenAuthentication(BaseAuthentication):
             # This is not quite the same as the default get_or_create() behaviour because we make
             # use of the create_user() helper here. This ensures the user is created and that
             # set_unusable_password() is also called on it.
+            #
+            # See https://stackoverflow.com/questions/7511391/
             try:
-                user = get_user_model().objects.get(username=subject)
-            except ObjectDoesNotExist:
                 user = get_user_model().objects.create_user(username=subject)
+            except django.db.IntegrityError:
+                user = get_user_model().objects.get(username=subject)
         else:
             user = None
 
