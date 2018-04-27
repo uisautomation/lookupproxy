@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'ucamwebauth',
     'automationcommon',
-    'oauthcommon',
+    'automationlookup',
     'rest_framework',
     'drf_yasg',
 

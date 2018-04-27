@@ -88,7 +88,9 @@ class AuthenticatedViewTestCase(ViewTestCase):
         mock_authenticate.return_value = return_value
 
         return mock.patch(
-            'oauthcommon.authentication.OAuth2TokenAuthentication.authenticate', mock_authenticate)
+            'automationoauthdrf.authentication.OAuth2TokenAuthentication.authenticate',
+            mock_authenticate
+        )
 
 
 class PersonByCRSIDTest(AuthenticatedViewTestCase, TestCase):

@@ -34,9 +34,6 @@ Views and serializers
 Authentication and permissions
 ``````````````````````````````
 
-.. automodule:: lookupapi.authentication
-    :members:
-
 .. automodule:: lookupapi.permissions
     :members:
 
