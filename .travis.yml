@@ -4,6 +4,9 @@ sudo: required
 services:
   - docker
 
+addons:
+  postgresql: "9.6"
+
 language: python
 
 # This should match the version run by tox.
