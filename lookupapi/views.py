@@ -131,7 +131,16 @@ class Person(ViewPermissionsMixin, generics.RetrieveAPIView):
 
         if scheme == "token" and identifier == "self":
             if self.request.user.is_authenticated:
-                scheme, identifier = self.request.user.username.split(":")
+                # Historically we have used both ':' and '+' as a record separator in usernames to
+                # record scheme and identifier. We have also used bare crsids. Attempt to support
+                # all of these things.
+                username = self.request.user.username
+                if ':' in username:
+                    scheme, identifier = username.split(':')
+                elif '+' in username:
+                    scheme, identifier = username.split('+')
+                else:
+                    scheme, identifier = 'crsid', username
             else:
                 raise Http404("You are not authenticated")
 
