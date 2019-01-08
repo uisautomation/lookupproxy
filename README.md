@@ -20,3 +20,4 @@ This application ships with a basic packaging using Docker. It makes use of
 container is configured to use lookupproxy.settings.docker by default as the
 Django settings. In use you probably want to override this with a settings
 module which includes at least the OAuth2 configuration and SECRET_KEY setting.
+
