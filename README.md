@@ -1,3 +1,5 @@
+Moved to https://gitlab.developers.cam.ac.uk/uis/devops/lookup/lookupproxy
+
 # Lookup Proxy API
 
 [![Build
